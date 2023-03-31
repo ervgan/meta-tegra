@@ -43,7 +43,7 @@ do_compile() {
     fi
 }
 do_compile[depends] += "${@compute_dependencies(d)}"
-do_compile[cleandirs] = "${B}"
+do_compile[dirs] = "${B}"
 
 python do_concat_dtb_overlays() {
    if d.getVar('UBOOT_EXTLINUX_FDT'):
@@ -52,9 +52,9 @@ python do_concat_dtb_overlays() {
                                           os.path.join(d.getVar('B'), d.getVar('DTBFILE')), d)
 }
 do_concat_dtb_overlays[dirs] = "${B}"
-do_concat_dtb_overlays[depends] = "${@'virtual/dtb:do_populate_sysroot' if d.getVar('PREFERRED_PROVIDER_virtual/dtb') else 'virtual/kernel:do_deploy'}"
+do_concat_dtb_overlays[depends] += "${@'virtual/dtb:do_populate_sysroot' if d.getVar('PREFERRED_PROVIDER_virtual/dtb') else 'virtual/kernel:do_deploy'}"
 
-addtask concat_dtb_overlays after do_configure before do_install
+addtask concat_dtb_overlays after do_configure before do_sign_files
 
 # Override this function in a bbappend to
 # implement other signing mechanisms
